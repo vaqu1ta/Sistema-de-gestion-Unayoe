@@ -208,14 +208,16 @@ let file = req.files.filename;
                     ]);
 
                     let [{response}]= respuesta[0];
+                    console.log(response);
+                    
                     r = response;
+
                } 
                if(r == 0){
                     req.flash('successCargaBien', 'Todo ok');
                }
                else{
                     req.flash('successCargaMal', 'algo salio mal');
-                    console.log('entra');
                }
                res.redirect('/cargaOca');
           }
@@ -240,18 +242,18 @@ let file = req.files.filename;
                     sourceFile: './excel/'+filename,
                     header: {rows:1},
                     columnToKey: {A: '_ocObservacionPsicologica', B: '_Alumno_idAlumno'},
-                    sheets: ['Hoja']
+                    sheets: ['Hoja1']
                });
                let r;
-               for(let i = 0; infoExcel.Hoja.length > i; i++){
+               for(let i = 0; infoExcel.Hoja1.length > i; i++){
                     let {
                          _ocObservacionPsicologica,
-                         _Alumno_idAlumno} = infoExcel.Hoja[i];
+                         _Alumno_idAlumno} = infoExcel.Hoja1[i];
                     const newLink = {
                          _ocObservacionPsicologica:_ocObservacionPsicologica ,
                          _Alumno_idAlumno:_Alumno_idAlumno.toString(),
                     };
-                    let respuesta = await pool.query('CALL sp_CargarDatosExcelSum(?,?)', [newLink._ocObservacionPsicologica, newLink._Alumno_idAlumno]);
+                    let respuesta = await pool.query('CALL sp_CargarDatosExcelClinica(?,?)', [newLink._ocObservacionPsicologica, newLink._Alumno_idAlumno]);
                     let [{response}]= respuesta[0];
                     r = response;
                     
@@ -286,15 +288,15 @@ let file = req.files.filename;
                     sourceFile: './excel/'+filename,
                     header: {rows:1},
                     columnToKey: {A: '_sumPromedioPonderado', B: '_sumCiclo', C: '_sumPermanencia', D: '_sumSituacionAcademica', E: '_Alumno_idAlumno'},
-                    sheets: ['Hoja']
+                    sheets: ['Hoja1']
                });
-               for(let i = 0; infoExcel.Hoja.length > i; i++){
+               for(let i = 0; infoExcel.Hoja1.length > i; i++){
                     let {
                          _sumPromedioPonderado,
                          _sumCiclo,
                          _sumPermanencia,
                          _sumSituacionAcademica,
-                         _Alumno_idAlumno} = infoExcel.Hoja[i];
+                         _Alumno_idAlumno} = infoExcel.Hoja1[i];
 
                     const newLink = {
                          _sumPromedioPonderado: _sumPromedioPonderado,
@@ -344,10 +346,10 @@ let file = req.files.filename;
                //      sourceFile: './excel/'+filename,
                //      header: {rows:1},
                //      columnToKey: {A: 'id', B: 'username', C: 'password', D: 'fullname'},
-               //      sheets: ['Hoja']
+               //      sheets: ['Hoja1']
                // });
-               // for(let i = 0; infoExcel.Hoja.length > i; i++){
-               //      let {id, username, password, fullname} = infoExcel.Hoja[i];
+               // for(let i = 0; infoExcel.Hoja1.length > i; i++){
+               //      let {id, username, password, fullname} = infoExcel.Hoja1[i];
                //      const newLink = {
                //           id: id,
                //           username: username,
