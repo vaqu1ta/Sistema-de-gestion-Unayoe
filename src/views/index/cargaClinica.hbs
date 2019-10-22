@@ -1,0 +1,31 @@
+<br>
+<div class="div container-fluid">
+     <ul class="nav nav-tabs" id="cargas">
+          <li class="nav-item" id="carga-1"><a class="nav-link" href="/cargaOca">Carga de datos de la OCA</a></li>
+          <li class="nav-item" id="carga-2"><a class="nav-link disabled" href="/cargaClinica">Carga de datos de la clínica</a></li>
+          <li class="nav-item" id="carga-3"><a class="nav-link" href="/cargaSum">Carga de datos del SUM</a></li>
+          <li class="nav-item" id="carga-4"><a class="nav-link" href="/cargaUnayoe">Carga de datos Unayoe</a></li>
+
+     </ul>
+
+
+ 
+     <div class="tab-content">
+          <div class="container p-4">
+               {{>mensajeFinal}}
+               <div class="row">
+                    <div class="col-md-4 mx-auto">
+                         <div class="card card-body text-center">
+                              <p>Elija el archivo Excel con los datos de la clínica universitaria</p>
+                              <form action="/cargaClinica" method="post" enctype="multipart/form-data">
+                                   <div class="div group">
+                                        <input type="file" class="form-control-file" name="filename">
+                                   </div>
+                                   <button type="submit" class="btn btn-dark btn-sm">import excel</button>
+                              </form>
+                         </div>
+                    </div>
+               </div>
+          </div> 
+     </div>
+</div>
