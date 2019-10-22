@@ -1,0 +1,58 @@
+
+.centrarBarraFiltros {
+     display:flex; 
+     justify-content: 
+     space-around;
+     align-items: center;
+ }
+ 
+ .centrarSelects {
+     display:flex; 
+     justify-content: space-around; 
+     align-items: center;
+ }
+ 
+ .centrarBotones {
+     display:flex; 
+     justify-content: center; 
+     align-items: center;
+     
+ }
+ 
+ .div-oculto{
+     visibility: hidden;
+  }
+ 
+ .tabla-chica{
+     font-size: 16px;
+ }
+ 
+ .pagina-chica{
+     font-size: 13px;
+ }
+ 
+ .paginado {
+     display: flex;
+     justify-content: flex-end;
+ }
+ 
+ .select2{
+     margin: 0px 5px;
+     margin-bottom: 15px !important;
+ }
+ 
+ .contenedorInputBuscarActivo{
+     display: flex;
+     justify-content: flex-end;
+     margin-bottom: 5px;
+ }
+ 
+ .btnCentrado {
+     display: flex;
+     justify-content: center;
+     width: 100%;
+ }
+ 
+ .optionRed {
+     color: red;
+ }

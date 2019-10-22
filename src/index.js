@@ -10,8 +10,11 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const MySQLStore= require('express-mysql-session');
 const {database} = require('./keys');
+const passport = require('passport');
+
 //inicializaciones
 const app = express();
+require('./lib/passport');
 
 //configuraciones
 app.set('port', process.env.PORT || 4000);
@@ -36,11 +39,14 @@ app.use(flash());
 app.use(morgan('dev'));
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Variables globales
 app.use((req, res, next) => {
      app.locals.success = req.flash('success');
-     app.locals.successCarga = req.flash('successCarga');
+     app.locals.successCargaBien = req.flash('successCargaBien');
+     app.locals.successCargaMal = req.flash('successCargaMal');
      next() ;
 });
 
@@ -49,6 +55,8 @@ app.use(require('./routes'));
 app.use(require('./routes/authentication'));
 app.use('/links',require('./routes/links'));
 app.use('/index',require('./routes/index'));
+app.use('/alumno',require('./routes/alumno'));
+
 
 //Archivos Publicos
 app.use(express.static(path.join(__dirname, 'public')));
@@ -202,12 +210,11 @@ let file = req.files.filename;
                     let [{response}]= respuesta[0];
                     r = response;
                } 
-               console.log(r);
                if(r == 0){
-                    req.flash('successCarga', 'Todo ok');
+                    req.flash('successCargaBien', 'Todo ok');
                }
                else{
-                    req.flash('successCarga', 'algo salio mal');
+                    req.flash('successCargaMal', 'algo salio mal');
                     console.log('entra');
                }
                res.redirect('/cargaOca');
@@ -229,24 +236,34 @@ let file = req.files.filename;
           else{
                console.log('entra a Clinica');
                
-               // let infoExcel = importExcel({
-               //      sourceFile: './excel/'+filename,
-               //      header: {rows:1},
-               //      columnToKey: {A: 'id', B: 'username', C: 'password', D: 'fullname'},
-               //      sheets: ['Hoja']
-               // });
-               // for(let i = 0; infoExcel.Hoja.length > i; i++){
-               //      let {id, username, password, fullname} = infoExcel.Hoja[i];
-               //      const newLink = {
-               //           id: id,
-               //           username: username,
-               //           password: password,
-               //           fullname: fullname
-               //      };
-               //      await pool.query('INSERT INTO users SET ?', [newLink]);
-
+               let infoExcel = importExcel({
+                    sourceFile: './excel/'+filename,
+                    header: {rows:1},
+                    columnToKey: {A: '_ocObservacionPsicologica', B: '_Alumno_idAlumno'},
+                    sheets: ['Hoja']
+               });
+               let r;
+               for(let i = 0; infoExcel.Hoja.length > i; i++){
+                    let {
+                         _ocObservacionPsicologica,
+                         _Alumno_idAlumno} = infoExcel.Hoja[i];
+                    const newLink = {
+                         _ocObservacionPsicologica:_ocObservacionPsicologica ,
+                         _Alumno_idAlumno:_Alumno_idAlumno.toString(),
+                    };
+                    let respuesta = await pool.query('CALL sp_CargarDatosExcelSum(?,?)', [newLink._ocObservacionPsicologica, newLink._Alumno_idAlumno]);
+                    let [{response}]= respuesta[0];
+                    r = response;
                     
-               // } 
+               } 
+               if(r == 0){
+                    req.flash('successCargaBien', 'Todo ok');
+               }
+               else{
+                    req.flash('successCargaMal', 'algo salio mal');
+                    console.log('entra');
+               }
+               res.redirect('/cargaClinica');
           }
      }) 
 })
@@ -265,24 +282,46 @@ let file = req.files.filename;
           else{
                console.log('entra a Sum');
                
-               // let infoExcel = importExcel({
-               //      sourceFile: './excel/'+filename,
-               //      header: {rows:1},
-               //      columnToKey: {A: 'id', B: 'username', C: 'password', D: 'fullname'},
-               //      sheets: ['Hoja']
-               // });
-               // for(let i = 0; infoExcel.Hoja.length > i; i++){
-               //      let {id, username, password, fullname} = infoExcel.Hoja[i];
-               //      const newLink = {
-               //           id: id,
-               //           username: username,
-               //           password: password,
-               //           fullname: fullname
-               //      };
-               //      await pool.query('INSERT INTO users SET ?', [newLink]);
+               let infoExcel = importExcel({
+                    sourceFile: './excel/'+filename,
+                    header: {rows:1},
+                    columnToKey: {A: '_sumPromedioPonderado', B: '_sumCiclo', C: '_sumPermanencia', D: '_sumSituacionAcademica', E: '_Alumno_idAlumno'},
+                    sheets: ['Hoja']
+               });
+               for(let i = 0; infoExcel.Hoja.length > i; i++){
+                    let {
+                         _sumPromedioPonderado,
+                         _sumCiclo,
+                         _sumPermanencia,
+                         _sumSituacionAcademica,
+                         _Alumno_idAlumno} = infoExcel.Hoja[i];
 
+                    const newLink = {
+                         _sumPromedioPonderado: _sumPromedioPonderado,
+                         _sumCiclo: _sumCiclo,
+                         _sumPermanencia: _sumPermanencia,
+                         _sumSituacionAcademica: _sumSituacionAcademica,
+                         _Alumno_idAlumno: _Alumno_idAlumno
+                    };
+                    let respuesta = await pool.query('CALL sp_CargarDatosExcelSum(?,?,?,?,?)', [
+                         newLink._sumPromedioPonderado,
+                         newLink._sumCiclo,
+                         newLink._sumPermanencia,
+                         newLink._sumSituacionAcademica,
+                         newLink._Alumno_idAlumno
+                    ]);
+                    let [{response}]= respuesta[0];
+                    r = response;
                     
-               // } 
+               } 
+               if(r == 0){
+                    req.flash('successCargaBien', 'Todo ok');
+               }
+               else{
+                    req.flash('successCargaMal', 'algo salio mal');
+                    console.log('entra');
+               }
+               res.redirect('/cargaSum');
           }
      }) 
 })
