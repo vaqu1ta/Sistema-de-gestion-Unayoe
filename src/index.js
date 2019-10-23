@@ -48,6 +48,7 @@ app.use((req, res, next) => {
      app.locals.message = req.flash('message');
      app.locals.successCargaBien = req.flash('successCargaBien');
      app.locals.successCargaMal = req.flash('successCargaMal');
+     app.locals.user = req.user;
      next() ;
 });
 

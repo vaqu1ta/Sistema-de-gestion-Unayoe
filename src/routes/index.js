@@ -1,23 +1,25 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+const {isLoggedIn} = require('../lib/auth');
+
+router.get('/',isLoggedIn, async (req, res) => {
      res.render('index/index');
 })
 
-router.get('/cargaOca', (req, res) => {
+router.get('/cargaOca',isLoggedIn, (req, res) => {
      res.render('index/cargaOca');
 })
 
-router.get('/cargaClinica', (req, res) => {
+router.get('/cargaClinica',isLoggedIn, (req, res) => {
      res.render('index/cargaClinica');
 })
 
-router.get('/cargaSum', (req, res) => {
+router.get('/cargaSum',isLoggedIn, (req, res) => {
      res.render('index/cargaSum');
 })
 
-router.get('/cargaUnayoe', (req, res) => {
+router.get('/cargaUnayoe',isLoggedIn, (req, res) => {
      res.render('index/cargaUnayoe');
 })
 
