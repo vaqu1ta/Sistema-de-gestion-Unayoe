@@ -3,7 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 
 
-const {isNotLoggedIn} = require('../lib/auth');
+const {isLoggedIn,isNotLoggedIn} = require('../lib/auth');
 
 router.get('/signup',isNotLoggedIn, (req, res) => {
      res.render('auth/signup');
@@ -28,7 +28,7 @@ router.post('/signin', isNotLoggedIn,(req, res, next) => {
      })(req, res, next);
 })
 
-router.get('/logout', isNotLoggedIn, (req, res) => {
+router.get('/logout', isLoggedIn, (req, res) => {
      req.logOut();
      res.redirect('/signin');
 });
